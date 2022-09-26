@@ -138,22 +138,15 @@ function update() {
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
-
-  //  Add and update the score
-  score += 10;
-  scoreText.setText("Score: " + score);
-
-
-    var x =
-      player.x < 400
-        ? Phaser.Math.Between(400, 800)
-        : Phaser.Math.Between(0, 400);
-
-    var bomb = bombs.create(x, 16, "bomb");
+    //TODO RUN GAMEOVER CODE
+    
+    /* spawn bomb code
+        var bomb = bombs.create(x, 16, "bomb");
     bomb.setBounce(1);
     bomb.setCollideWorldBounds(true);
     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
     bomb.allowGravity = false;
+    */
   }
 
 
