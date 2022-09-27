@@ -40,11 +40,16 @@ function create() {
   //  A simple background for our game
   this.add.image(400, 300, "checkerboard");
 
-  //  The platforms group contains the ground and the 2 ledges we can jump on
-  walls = this.physics.add.staticGroup();
+  //  Create the horizontal walls and the vertical walls
+  wallsH = this.physics.add.staticGroup();
+  wallsV = this.physics.add.staticGroup();
 
   //  Generate maze walls
-  walls.create(400, 600, "wall");
+  wallsV.create(400, 300, "wall");
+  wallsV.create(100, 200, "wall");
+
+  // Rotate the vertical walls
+  wallsV.rotate(Math.PI / 2, 0);
 
   // The player and its settings
   player = this.physics.add.sprite(100, 450, "dude");
@@ -82,10 +87,13 @@ function create() {
 
   guards = this.physics.add.group();
 
-  //  Collide the player and the stars with the platforms
-  this.physics.add.collider(player, platforms);
-  this.physics.add.collider(jewel, platforms);
-  this.physics.add.collider(guards, platforms);
+  //  Collide the player with the vertical walls
+  this.physics.add.collider(player, wallsV);
+  this.physics.add.collider(guards, wallsV);
+
+  // Collide the player with the horizontal walls
+  this.physics.add.collider(player, wallsH);
+  this.physics.add.collider(guards, wallsV);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
