@@ -17,7 +17,7 @@ var config = {
 };
 
 var player;
-var jewels;
+var jewel;
 var bombs;
 var platforms;
 var cursors;
@@ -88,7 +88,6 @@ function create() {
   jewel = this.physics.add.sprite(100, 100, "jewel");
   jewel.setScale(0.04);
 
-
   bombs = this.physics.add.group();
 
   //  The score
@@ -138,17 +137,16 @@ function update() {
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
-    //TODO RUN GAMEOVER CODE
-    
-    /* spawn bomb code
+  //TODO RUN GAMEOVER CODE
+
+  /* spawn bomb code
         var bomb = bombs.create(x, 16, "bomb");
     bomb.setBounce(1);
     bomb.setCollideWorldBounds(true);
     bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
     bomb.allowGravity = false;
     */
-  }
-
+}
 
 function hitBomb(player, bomb) {
   this.physics.pause();
