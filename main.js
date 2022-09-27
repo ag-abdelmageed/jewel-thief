@@ -29,7 +29,7 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("ground", "assets/platform.png");
+  this.load.image("wall", "assets/platform.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("bomb", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
@@ -43,16 +43,10 @@ function create() {
   this.add.image(400, 300, "checkerboard");
 
   //  The platforms group contains the ground and the 2 ledges we can jump on
-  platforms = this.physics.add.staticGroup();
+  walls = this.physics.add.staticGroup();
 
-  //  Here we create the ground.
-  //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-  platforms.create(400, 568, "ground").setScale(2).refreshBody();
-
-  //  Now let's create some ledges
-  platforms.create(600, 400, "ground");
-  platforms.create(50, 250, "ground");
-  platforms.create(750, 220, "ground");
+  //  Generate maze walls
+  walls.create(400, 600, "wall");
 
   // The player and its settings
   player = this.physics.add.sprite(100, 450, "dude");
@@ -112,26 +106,43 @@ function update() {
     return;
   }
 
+  // What X direction is player moving
   if (cursors.left.isDown) {
+    // Left, so set velocity to left (negative)
     player.setVelocityX(-160);
 
+    // Adjust animation to left
     player.anims.play("left", true);
   } else if (cursors.right.isDown) {
+    // Right, so set velocity to right (positive)
     player.setVelocityX(160);
 
+    // Adjust animation to right
     player.anims.play("right", true);
   } else {
+    // None, so set velocity to still in X (0)
     player.setVelocityX(0);
 
+    // Adjust animation to no horizontal movement
     player.anims.play("turn");
   }
 
+  // What Y direction is player moving
   if (cursors.up.isDown) {
+    // Up, so set velocity to up (negative)
     player.setVelocityY(-160);
+
+    // Adjust animation to up
   } else if (cursors.down.isDown) {
+    // Down, so set velocity to down (positive)
     player.setVelocityY(160);
+
+    // Adjust animation to down
   } else {
+    // None, so set velocity to still in Y (0)
     player.setVelocityY(0);
+
+    // Adjust animation to no vertical movement (maybe?)
   }
 }
 
