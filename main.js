@@ -86,7 +86,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   jewel = this.physics.add.sprite(100, 100, "jewel");
-  jewel.setScale(0.04);
+  jewel.setScale(0.1);
 
 
   bombs = this.physics.add.group();
@@ -139,7 +139,7 @@ function update() {
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
     //TODO RUN GAMEOVER CODE
-    
+
     /* spawn bomb code
         var bomb = bombs.create(x, 16, "bomb");
     bomb.setBounce(1);
