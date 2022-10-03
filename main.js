@@ -18,12 +18,10 @@ var config = {
 
 var player;
 var jewels;
-var bombs;
+var guards;
 var platforms;
 var cursors;
-var score = 0;
 var gameOver = false;
-var scoreText;
 
 var game = new Phaser.Game(config);
 
@@ -31,7 +29,7 @@ function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
   this.load.image("ground", "assets/platform.png");
   this.load.image("jewel", "assets/jewel.png");
-  this.load.image("bomb", "assets/bomb.png");
+  this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
     frameWidth: 32,
     frameHeight: 48,
@@ -89,23 +87,17 @@ function create() {
   jewel.setScale(0.1);
 
 
-  bombs = this.physics.add.group();
-
-  //  The score
-  scoreText = this.add.text(16, 16, "score: 0", {
-    fontSize: "32px",
-    fill: "#000",
-  });
+  guards = this.physics.add.group();
 
   //  Collide the player and the stars with the platforms
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(jewel, platforms);
-  this.physics.add.collider(bombs, platforms);
+  this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
 
-  this.physics.add.collider(player, bombs, hitBomb, null, this);
+  this.physics.add.collider(player, guards, hitGuard, null, this);
 }
 
 function update() {
@@ -139,18 +131,16 @@ function update() {
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
     //TODO RUN GAMEOVER CODE
+    
+    /*spawn guard code*/
+    var guard = guards.create(20, 16, "guard");
+    guard = guards.create(200, 500, "guard");
+    guard.setBounce(1);
+    guard.setCollideWorldBounds(true);
+   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    guard.allowGravity = false;
 
-    /* spawn bomb code
-        var bomb = bombs.create(x, 16, "bomb");
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    bomb.allowGravity = false;
-    */
-  }
-
-
-function hitBomb(player, bomb) {
+function hitGuard(player, guard) {
   this.physics.pause();
 
   player.setTint(0xff0000);
