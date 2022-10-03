@@ -27,7 +27,8 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("wall", "assets/platform.png");
+  this.load.image("wallV", "assets/platformV.png");
+  this.load.image("wallH", "assets/platform.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
@@ -37,19 +38,16 @@ function preload() {
 }
 
 function create() {
-  //  A simple background for our game
+  // A simple background for our game
   this.add.image(400, 300, "checkerboard");
 
-  //  Create the horizontal walls and the vertical walls
+  // Create the horizontal walls and the vertical walls
   wallsH = this.physics.add.staticGroup();
   wallsV = this.physics.add.staticGroup();
 
-  //  Generate maze walls
-  wallsV.create(400, 300, "wall");
-  wallsV.create(100, 200, "wall");
-
-  // Rotate the vertical walls
-  wallsV.rotate(Math.PI / 2, 0);
+  // Generate maze walls
+  wallsV.create(400, 300, "wallV");
+  wallsV.create(100, 200, "wallV");
 
   // The player and its settings
   player = this.physics.add.sprite(100, 450, "dude");
@@ -93,7 +91,7 @@ function create() {
 
   // Collide the player with the horizontal walls
   this.physics.add.collider(player, wallsH);
-  this.physics.add.collider(guards, wallsV);
+  this.physics.add.collider(guards, wallsH);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
