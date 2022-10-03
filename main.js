@@ -84,8 +84,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   jewel = this.physics.add.sprite(100, 100, "jewel");
-  jewel.setScale(0.1);
-
+  jewel.setScale(0.04);
 
   guards = this.physics.add.group();
 
