@@ -38,7 +38,8 @@ function preload() {
 
 function create() {
   //  A simple background for our game
-  this.add.image(400, 300, "checkerboard");
+  background = this.add.image(400, 300, "checkerboard");
+  background.setScale(0.2)
 
   //  The platforms group contains the ground and the 2 ledges we can jump on
   platforms = this.physics.add.staticGroup();
@@ -140,12 +141,13 @@ function collectJewel(player, jewel) {
    // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
     guard.allowGravity = false;
 
-function hitGuard(player, guard) {
-  this.physics.pause();
+  function hitGuard(player, guard) {
+    this.physics.pause();
 
-  player.setTint(0xff0000);
+    player.setTint(0xff0000);
 
-  player.anims.play("turn");
+    player.anims.play("turn");
 
-  gameOver = true;
+    gameOver = true;
+  }
 }
