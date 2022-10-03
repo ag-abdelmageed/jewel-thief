@@ -45,12 +45,12 @@ function create() {
 
   //  Here we create the ground.
   //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-  platforms.create(400, 568, "ground").setScale(0.1).refreshBody();
+  platforms.create(400, 568, "ground").setScale(0.4).refreshBody();
 
   //  Now let's create some ledges
-  platforms.create(600, 400, "ground");
-  platforms.create(50, 250, "ground");
-  platforms.create(750, 220, "ground");
+  platforms.create(600, 400, "ground").setScale(0.4).refreshBody();
+  platforms.create(50, 250, "ground").setScale(0.4).refreshBody();
+  platforms.create(750, 220, "ground").setScale(0.4).refreshBody();
 
   // The player and its settings
   player = this.physics.add.sprite(100, 450, "dude");
