@@ -84,7 +84,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   jewel = this.physics.add.sprite(100, 100, "jewel");
-  jewel.setScale(0.04);
+  jewel.setScale(0.1);
 
   guards = this.physics.add.group();
 
@@ -138,6 +138,7 @@ function collectJewel(player, jewel) {
     guard.setCollideWorldBounds(true);
    // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
     guard.allowGravity = false;
+}
 
 function hitGuard(player, guard) {
   this.physics.pause();
