@@ -27,7 +27,7 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("ground", "assets/platform.png");
+  this.load.image("ground", "assets/Brickwall.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
@@ -45,7 +45,7 @@ function create() {
 
   //  Here we create the ground.
   //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-  platforms.create(400, 568, "ground").setScale(2).refreshBody();
+  platforms.create(400, 568, "ground").setScale(0.1).refreshBody();
 
   //  Now let's create some ledges
   platforms.create(600, 400, "ground");
