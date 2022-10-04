@@ -22,6 +22,8 @@ var guards;
 var platforms;
 var cursors;
 var gameOver = false;
+var tileSize = 80;
+var moveTimer = 150;
 
 var game = new Phaser.Game(config);
 
@@ -39,7 +41,7 @@ function preload() {
 function create() {
   //  A simple background for our game
   background = this.add.image(400, 300, "checkerboard");
-  background.setScale(0.2)
+  background.setScale(2)  
 
   //  The platforms group contains the ground and the 2 ledges we can jump on
   platforms = this.physics.add.staticGroup();
@@ -54,7 +56,7 @@ function create() {
   platforms.create(750, 220, "ground");
 
   // The player and its settings
-  player = this.physics.add.sprite(100, 450, "dude");
+  player = this.physics.add.sprite(118, 485, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.setBounce(0.2);
@@ -93,12 +95,12 @@ function create() {
   //  Collide the player and the stars with the platforms
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(jewel, platforms);
-  this.physics.add.collider(guards, platforms);
+  this.physics.add.collider(guards, platforms); 
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
 
-  this.physics.add.collider(player, guards, hitGuard, null, this);
+  //this.physics.add.collider(player, guards, hitGuard, null, this);
 }
 
 function update() {
@@ -106,26 +108,31 @@ function update() {
     return;
   }
 
-  if (cursors.left.isDown) {
-    player.setVelocityX(-160);
+  if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
+    player.x -= tileSize;
 
     player.anims.play("left", true);
-  } else if (cursors.right.isDown) {
-    player.setVelocityX(160);
+  } 
+  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+    player.x += tileSize;
 
     player.anims.play("right", true);
-  } else {
+  } 
+  else {
     player.setVelocityX(0);
 
     player.anims.play("turn");
   }
 
-  if (cursors.up.isDown) {
-    player.setVelocityY(-160);
-  } else if (cursors.down.isDown) {
-    player.setVelocityY(160);
-  } else {
+  if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+    player.y -= tileSize;
+  } 
+  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+    player.y += tileSize;
+  } 
+  else {
     player.setVelocityY(0);
+
   }
 }
 
