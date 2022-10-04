@@ -1,3 +1,6 @@
+const CENTER_HORIZONTAL = 400;
+const CENTER_VERTICAL = 300;
+
 var config = {
   type: Phaser.AUTO,
   width: 800,
@@ -27,8 +30,10 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("wallV", "assets/platformV.png");
-  this.load.image("wallH", "assets/platform.png");
+  this.load.image("blueT", "assets/tileBlue.png");
+  this.load.image("whiteT", "assets/tileWhite.png");
+  this.load.image("wallV", "assets/wallV.png");
+  this.load.image("wallH", "assets/wallH.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
@@ -38,19 +43,42 @@ function preload() {
 }
 
 function create() {
-  // A simple background for our game
-  this.add.image(400, 300, "checkerboard");
+  // Generate the checkerboard background
+  let whiteTile = false;
+  // Loop through the columns
+  for (let h = 40; h < 600; h += 80.5) {
+    // Loop through the row
+    for (let w = 40; w < 800; w += 80.5) {
+      // White or blue tile?
+      if (whiteTile) {
+        this.add.image(w, h, "whiteT").setScale(2);
+      } else {
+        this.add.image(w, h, "blueT").setScale(2);
+      }
+      // Switch colors
+      whiteTile = !whiteTile;
+    }
+    // Alternate orders for row
+    whiteTile = !whiteTile;
+  }
+  // this.add.image(400, 300, "checkerboard");
 
   // Create the horizontal walls and the vertical walls
   wallsH = this.physics.add.staticGroup();
   wallsV = this.physics.add.staticGroup();
 
-  // Generate maze walls
-  wallsV.create(400, 300, "wallV");
-  wallsV.create(100, 200, "wallV");
+  // Generate the vertical maze walls
+  wallsV.create(40, CENTER_VERTICAL, "wallV");
+  wallsV.create(760, CENTER_VERTICAL, "wallV");
+
+  // Generate the horizontal maze walls
+  for (let i = 60; i < 800; i += 120) {
+    wallsH.create(i, CENTER_VERTICAL - 90, "wallH");
+    wallsH.create(i, CENTER_VERTICAL + 90, "wallH");
+  }
 
   // The player and its settings
-  player = this.physics.add.sprite(100, 450, "dude");
+  player = this.physics.add.sprite(CENTER_HORIZONTAL, 300, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.setBounce(0.2);
@@ -80,7 +108,7 @@ function create() {
   //  Input Events
   cursors = this.input.keyboard.createCursorKeys();
 
-  jewel = this.physics.add.sprite(100, 100, "jewel");
+  jewel = this.physics.add.sprite(650, CENTER_VERTICAL, "jewel");
   jewel.setScale(0.1);
 
   guards = this.physics.add.group();
