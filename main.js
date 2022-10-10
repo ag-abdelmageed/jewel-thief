@@ -58,7 +58,7 @@ function create() {
   platforms.create(750, 220, "ground");
 
   // The player and its settings
-  player = this.physics.add.sprite(118, 485, "dude");
+  player = this.physics.add.sprite(120, 500, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   //player.setBounce(0.2);
@@ -123,25 +123,25 @@ function update() {
 
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
     lastPosx = player.x;
-    lastPosy = 0;
+    lastPosy = player.y;
     player.x -= tileSize;
     player.anims.play("left", true);
   } 
   else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
     lastPosx = player.x;
-    lastPosy = 0;
+    lastPosy = player.y;
     player.x += tileSize;
     player.anims.play("right", true);
   }
 
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
     lastPosy = player.y;
-    lastPosx = 0;
+    lastPosx = player.x;;
     player.y -= tileSize;
   } 
   else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
     lastPosy = player.y;
-    lastPosx = 0;
+    lastPosx = player.x;
     player.y += tileSize;
   } 
 }
