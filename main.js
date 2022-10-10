@@ -45,34 +45,38 @@ function preload() {
 }
 
 function create() {
-  // Generate the checkerboard background
+  // GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
+  const bottom = 380;
+  const tileScale = 0.99;
+  const tileAdjustment = 0 * tileScale;
 
   // Loop through the columns
   for (
-    let h = CENTER_VERTICAL, hu = CENTER_VERTICAL;
-    h < 600;
-    h += TILE_HEIGHT + 0.25, hu -= TILE_HEIGHT + 0.25
+    let hl = CENTER_VERTICAL, hu = CENTER_VERTICAL;
+    hl < bottom;
+    hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
   ) {
     // Loop through the row
-    for (let w = TILE_WIDTH / 2; w < 800; w += TILE_WIDTH + 0.25) {
-      if (h === CENTER_VERTICAL) {
+    for (let w = TILE_WIDTH / 2; w < 800; w += TILE_WIDTH + tileAdjustment) {
+      // Is the first row being generated?
+      if (hl === CENTER_VERTICAL) {
         // White or blue tile?
         if (whiteTile) {
-          this.add.image(w, h, "whiteT");
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
         } else {
-          this.add.image(w, h, "blueT");
+          this.add.image(w, hl, "blueT").setScale(tileScale);
         }
         // Switch colors
         whiteTile = !whiteTile;
       } else {
         // White or blue tile?
         if (whiteTile) {
-          this.add.image(w, hu, "whiteT");
-          this.add.image(w, h, "whiteT");
+          this.add.image(w, hu, "whiteT").setScale(tileScale);
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
         } else {
-          this.add.image(w, hu, "blueT");
-          this.add.image(w, h, "blueT");
+          this.add.image(w, hu, "blueT").setScale(tileScale);
+          this.add.image(w, hl, "blueT").setScale(tileScale);
         }
         // Switch colors
         whiteTile = !whiteTile;
@@ -81,24 +85,24 @@ function create() {
     // Alternate orders for row
     whiteTile = !whiteTile;
   }
-  // this.add.image(400, 300, "checkerboard");
 
+  // GENERATE WALLS ---------------------------------------------------------------------
   // Create the horizontal walls and the vertical walls
   wallsH = this.physics.add.staticGroup();
   wallsV = this.physics.add.staticGroup();
 
   // Generate the vertical maze walls
-  wallsV.create(40, CENTER_VERTICAL, "wallV");
-  wallsV.create(760, CENTER_VERTICAL, "wallV");
+  // wallsV.create(60, CENTER_VERTICAL, "wallV");
+  // wallsV.create(745, CENTER_VERTICAL, "wallV");
 
   // Generate the horizontal maze walls
   for (let i = 60; i < 800; i += 120) {
-    wallsH.create(i, CENTER_VERTICAL - 82, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 82, "wallH");
+    wallsH.create(i, CENTER_VERTICAL - 80, "wallH");
+    wallsH.create(i, CENTER_VERTICAL + 80, "wallH");
   }
 
   // The player and its settings
-  player = this.physics.add.sprite(CENTER_HORIZONTAL, 300, "dude");
+  player = this.physics.add.sprite(101, CENTER_VERTICAL - 20, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.setBounce(0.2);
