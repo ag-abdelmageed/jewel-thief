@@ -1,5 +1,7 @@
 const CENTER_HORIZONTAL = 400;
 const CENTER_VERTICAL = 300;
+let TILE_WIDTH = 40;
+let TILE_HEIGHT = 40;
 
 var config = {
   type: Phaser.AUTO,
@@ -45,18 +47,36 @@ function preload() {
 function create() {
   // Generate the checkerboard background
   let whiteTile = false;
+
   // Loop through the columns
-  for (let h = 40; h < 600; h += 80.5) {
+  for (
+    let h = CENTER_VERTICAL, hu = CENTER_VERTICAL;
+    h < 600;
+    h += TILE_HEIGHT + 0.25, hu -= TILE_HEIGHT + 0.25
+  ) {
     // Loop through the row
-    for (let w = 40; w < 800; w += 80.5) {
-      // White or blue tile?
-      if (whiteTile) {
-        this.add.image(w, h, "whiteT").setScale(2);
+    for (let w = TILE_WIDTH / 2; w < 800; w += TILE_WIDTH + 0.25) {
+      if (h === CENTER_VERTICAL) {
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, h, "whiteT");
+        } else {
+          this.add.image(w, h, "blueT");
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
       } else {
-        this.add.image(w, h, "blueT").setScale(2);
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, hu, "whiteT");
+          this.add.image(w, h, "whiteT");
+        } else {
+          this.add.image(w, hu, "blueT");
+          this.add.image(w, h, "blueT");
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
       }
-      // Switch colors
-      whiteTile = !whiteTile;
     }
     // Alternate orders for row
     whiteTile = !whiteTile;
@@ -73,8 +93,8 @@ function create() {
 
   // Generate the horizontal maze walls
   for (let i = 60; i < 800; i += 120) {
-    wallsH.create(i, CENTER_VERTICAL - 90, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 90, "wallH");
+    wallsH.create(i, CENTER_VERTICAL - 82, "wallH");
+    wallsH.create(i, CENTER_VERTICAL + 82, "wallH");
   }
 
   // The player and its settings
