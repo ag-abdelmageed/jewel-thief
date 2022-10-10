@@ -24,6 +24,8 @@ var cursors;
 var gameOver = false;
 var tileSize = 80;
 var moveTimer = 150;
+var lastPosx = 0;
+var lastPosy = 0;
 
 var game = new Phaser.Game(config);
 
@@ -59,7 +61,7 @@ function create() {
   player = this.physics.add.sprite(118, 485, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
-  player.setBounce(0.2);
+  //player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
   //  Our player animations, turning, walking left and walking right.
@@ -93,14 +95,25 @@ function create() {
   guards = this.physics.add.group();
 
   //  Collide the player and the stars with the platforms
-  this.physics.add.collider(player, platforms);
-  this.physics.add.collider(jewel, platforms);
+  //FIX THIS
+  this.physics.add.collider(player, platforms, function (){
+    if (lastPosy != null) {
+      player.y = lastPosy;
+    }
+    if (lastPosx != null){
+      player.x = lastPosx;
+    }
+    lastPosx = player.x;
+    lastPosy = player.y;
+  });
   this.physics.add.collider(guards, platforms); 
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
 
   //this.physics.add.collider(player, guards, hitGuard, null, this);
+
+  //Collision event
 }
 
 function update() {
@@ -109,31 +122,28 @@ function update() {
   }
 
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = 0;
     player.x -= tileSize;
-
     player.anims.play("left", true);
   } 
   else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = 0;
     player.x += tileSize;
-
     player.anims.play("right", true);
-  } 
-  else {
-    player.setVelocityX(0);
-
-    player.anims.play("turn");
   }
 
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+    lastPosy = player.y;
+    lastPosx = 0;
     player.y -= tileSize;
   } 
   else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+    lastPosy = player.y;
+    lastPosx = 0;
     player.y += tileSize;
   } 
-  else {
-    player.setVelocityY(0);
-
-  }
 }
 
 function collectJewel(player, jewel) {
