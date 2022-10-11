@@ -92,8 +92,8 @@ function create() {
   wallsV = this.physics.add.staticGroup();
 
   // Generate the vertical maze walls
-  // wallsV.create(60, CENTER_VERTICAL, "wallV");
-  // wallsV.create(745, CENTER_VERTICAL, "wallV");
+  wallsV.create(20, CENTER_VERTICAL, "wallV");
+  wallsV.create(780, CENTER_VERTICAL, "wallV");
 
   // Generate the horizontal maze walls
   for (let i = 60; i < 800; i += 120) {
@@ -102,7 +102,7 @@ function create() {
   }
 
   // The player and its settings
-  player = this.physics.add.sprite(101, CENTER_VERTICAL - 20, "dude");
+  player = this.physics.add.sprite(20 + 6 * 40, CENTER_VERTICAL - 15, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.setBounce(0.2);
@@ -132,8 +132,12 @@ function create() {
   //  Input Events
   cursors = this.input.keyboard.createCursorKeys();
 
-  jewel = this.physics.add.sprite(650, CENTER_VERTICAL, "jewel");
-  jewel.setScale(0.1);
+  jewel = this.physics.add.sprite(
+    800 - 20 - 6 * 40,
+    CENTER_VERTICAL - 10,
+    "jewel"
+  );
+  jewel.setScale(0.125);
 
   guards = this.physics.add.group();
 
