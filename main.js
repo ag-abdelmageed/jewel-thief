@@ -55,7 +55,7 @@ function create() {
   //  Now let's create some ledges
   platforms.create(600, 400, "ground");
   platforms.create(50, 250, "ground");
-  platforms.create(750, 220, "ground");
+  platforms.create(750, 200, "ground");
 
   // The player and its settings
   player = this.physics.add.sprite(120, 500, "dude");
@@ -63,6 +63,15 @@ function create() {
   //  Player physics properties. Give the little guy a slight bounce.
   //player.setBounce(0.2);
   player.setCollideWorldBounds(true);
+  player.body.onWorldBounds = true;
+
+  //moves player back if they hit the screen bounds to keep them aligned in the center of each tile
+  /*player.body.world.on('worldbounds', function() {
+    console.log(player.x)
+    player.y = lastPosy;
+    player.x = lastPosx;
+    console.log(lastPosx)
+  });*/
 
   //  Our player animations, turning, walking left and walking right.
   this.anims.create({
@@ -94,17 +103,10 @@ function create() {
 
   guards = this.physics.add.group();
 
-  //  Collide the player and the stars with the platforms
-  //FIX THIS
+  //  stops player from going through platforms
   this.physics.add.collider(player, platforms, function (){
-    if (lastPosy != null) {
-      player.y = lastPosy;
-    }
-    if (lastPosx != null){
-      player.x = lastPosx;
-    }
-    lastPosx = player.x;
-    lastPosy = player.y;
+    player.y = lastPosy;
+    player.x = lastPosx;
   });
   this.physics.add.collider(guards, platforms); 
 
@@ -121,6 +123,7 @@ function update() {
     return;
   }
 
+  //Player movement
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
     lastPosx = player.x;
     lastPosy = player.y;
@@ -133,15 +136,14 @@ function update() {
     player.x += tileSize;
     player.anims.play("right", true);
   }
-
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+    lastPosx = player.x;
     lastPosy = player.y;
-    lastPosx = player.x;;
     player.y -= tileSize;
   } 
   else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
-    lastPosy = player.y;
     lastPosx = player.x;
+    lastPosy = player.y;
     player.y += tileSize;
   } 
 }
