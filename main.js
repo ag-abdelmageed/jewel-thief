@@ -42,9 +42,10 @@ function preload() {
   this.load.image("wallH", "assets/wallH.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
-  this.load.spritesheet("dude", "assets/dude.png", {
-    frameWidth: 32,
-    frameHeight: 48,
+  this.load.spritesheet("dude", "assets/RobberGuySpriteV2.png", {
+    frameWidth: 59, //32
+    frameHeight: 96, //48
+    
   });
 }
 
@@ -156,6 +157,7 @@ function create() {
   );
   jewel.setScale(0.125);
 
+
   guards = this.physics.add.group();
 
   //  stops player from going through platforms
@@ -182,6 +184,7 @@ function update() {
     return;
   }
 
+
   //Player movement
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
     lastPosx = player.x;
@@ -207,6 +210,7 @@ function update() {
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
+
   //TODO RUN GAMEOVER CODE
 
   /*spawn guard code*/
@@ -216,7 +220,6 @@ function collectJewel(player, jewel) {
   guard.setCollideWorldBounds(true);
   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
   guard.allowGravity = false;
-}
 
 function hitGuard(player, guard) {
   this.physics.pause();
@@ -227,3 +230,4 @@ function hitGuard(player, guard) {
 
   gameOver = true;
 }
+
