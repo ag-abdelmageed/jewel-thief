@@ -34,9 +34,10 @@ function preload() {
   this.load.image("ground", "assets/Brickwall.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
-  this.load.spritesheet("dude", "assets/dude.png", {
-    frameWidth: 32,
-    frameHeight: 48,
+  this.load.spritesheet("dude", "assets/RobberGuySpriteV2.png", {
+    frameWidth: 59, //32
+    frameHeight: 96, //48
+    
   });
 }
 
@@ -59,7 +60,7 @@ function create() {
   platforms.create(750, 220, "ground").setScale(0.4).refreshBody();
 
   // The player and its settings
-  player = this.physics.add.sprite(120, 500, "dude");
+  player = this.physics.add.sprite(100, 450, "dude").setScale(.8);
 
   //  Player physics properties. Give the little guy a slight bounce.
   //player.setBounce(0.2);
@@ -99,7 +100,7 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
 
   jewel = this.physics.add.sprite(100, 100, "jewel");
-  jewel.setScale(0.1);
+  jewel.setScale(0.07);
 
   guards = this.physics.add.group();
 
@@ -123,18 +124,27 @@ function update() {
     return;
   }
 
-  //Player movement
-  if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x -= tileSize;
-    player.anims.play("left", true);
-  } 
-  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x += tileSize;
-    player.anims.play("right", true);
+
+  if (cursors.left.isDown) {
+    player.setVelocityX(-160);
+
+    //player.anims.play("left", true);
+  } else if (cursors.right.isDown) {
+    player.setVelocityX(160);
+
+    //player.anims.play("right", true);
+  } else {
+    player.setVelocityX(0);
+
+    //player.anims.play("turn");
+  }
+
+  if (cursors.up.isDown) {
+    player.setVelocityY(-160);
+  } else if (cursors.down.isDown) {
+    player.setVelocityY(160);
+  } else {
+    player.setVelocityY(0);
   }
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
     lastPosx = player.x;
@@ -153,9 +163,11 @@ function collectJewel(player, jewel) {
     //TODO RUN GAMEOVER CODE
     
     /*spawn guard code*/
-    var guard = guards.create(20, 16, "guard");
+    var guard = guards.create(40, 50, "guard"); //20, 16
+    guard.setScale(3);
     guard = guards.create(200, 500, "guard");
     guard.setBounce(1);
+    guard.setScale(3);
     guard.setCollideWorldBounds(true);
    // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
     guard.allowGravity = false;
