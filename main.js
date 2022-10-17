@@ -170,4 +170,4 @@ function collectJewel(player, jewel) {
 
     gameOver = true;
   }
-}
+
