@@ -27,6 +27,10 @@ var guards;
 var platforms;
 var cursors;
 var gameOver = false;
+var tileSize = 80;
+var moveTimer = 150;
+var lastPosx = 0;
+var lastPosy = 0;
 
 var game = new Phaser.Game(config);
 
@@ -45,7 +49,7 @@ function preload() {
 }
 
 function create() {
-  // GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
+  /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
   const bottom = 380;
   const tileScale = 0.99;
@@ -109,8 +113,17 @@ function create() {
   player = this.physics.add.sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
-  player.setBounce(0.2);
+  //player.setBounce(0.2);
   player.setCollideWorldBounds(true);
+  player.body.onWorldBounds = true;
+
+  //moves player back if they hit the screen bounds to keep them aligned in the center of each tile
+  /*player.body.world.on('worldbounds', function() {
+    console.log(player.x)
+    player.y = lastPosy;
+    player.x = lastPosx;
+    console.log(lastPosx)
+  });*/
 
   //  Our player animations, turning, walking left and walking right.
   this.anims.create({
@@ -145,18 +158,19 @@ function create() {
 
   guards = this.physics.add.group();
 
-  //  Collide the player with the vertical walls
-  this.physics.add.collider(player, wallsV);
-  this.physics.add.collider(guards, wallsV);
-
-  // Collide the player with the horizontal walls
-  this.physics.add.collider(player, wallsH);
-  this.physics.add.collider(guards, wallsH);
+  //  stops player from going through platforms
+  this.physics.add.collider(player, platforms, function (){
+    player.y = lastPosy;
+    player.x = lastPosx;
+  });
+  this.physics.add.collider(guards, platforms); 
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
 
-  this.physics.add.collider(player, guards, hitGuard, null, this);
+  //this.physics.add.collider(player, guards, hitGuard, null, this);
+
+  //Collision event
 }
 
 function update() {
@@ -164,44 +178,29 @@ function update() {
     return;
   }
 
-  // What X direction is player moving
-  if (cursors.left.isDown) {
-    // Left, so set velocity to left (negative)
-    player.setVelocityX(-160);
-
-    // Adjust animation to left
+  //Player movement
+  if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.x -= tileSize;
     player.anims.play("left", true);
-  } else if (cursors.right.isDown) {
-    // Right, so set velocity to right (positive)
-    player.setVelocityX(160);
-
-    // Adjust animation to right
+  } 
+  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.x += tileSize;
     player.anims.play("right", true);
-  } else {
-    // None, so set velocity to still in X (0)
-    player.setVelocityX(0);
-
-    // Adjust animation to no horizontal movement
-    player.anims.play("turn");
   }
-
-  // What Y direction is player moving
-  if (cursors.up.isDown) {
-    // Up, so set velocity to up (negative)
-    player.setVelocityY(-160);
-
-    // Adjust animation to up
-  } else if (cursors.down.isDown) {
-    // Down, so set velocity to down (positive)
-    player.setVelocityY(160);
-
-    // Adjust animation to down
-  } else {
-    // None, so set velocity to still in Y (0)
-    player.setVelocityY(0);
-
-    // Adjust animation to no vertical movement (maybe?)
-  }
+  if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.y -= tileSize;
+  } 
+  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.y += tileSize;
+  } 
 }
 
 function collectJewel(player, jewel) {
@@ -217,12 +216,13 @@ function collectJewel(player, jewel) {
   guard.allowGravity = false;
 }
 
-function hitGuard(player, guard) {
-  this.physics.pause();
+  function hitGuard(player, guard) {
+    this.physics.pause();
 
-  player.setTint(0xff0000);
+    player.setTint(0xff0000);
 
-  player.anims.play("turn");
+    player.anims.play("turn");
 
-  gameOver = true;
+    gameOver = true;
+  }
 }
