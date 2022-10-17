@@ -31,7 +31,7 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("ground", "assets/platform.png");
+  this.load.image("ground", "assets/Brickwall.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/dude.png", {
@@ -50,12 +50,13 @@ function create() {
 
   //  Here we create the ground.
   //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-  platforms.create(400, 568, "ground").setScale(2).refreshBody();
+  platforms.create(400, 568, "ground").setScale(0.4).refreshBody();
 
   //  Now let's create some ledges
-  platforms.create(600, 400, "ground");
-  platforms.create(50, 250, "ground");
-  platforms.create(750, 200, "ground");
+
+  platforms.create(600, 400, "ground").setScale(0.4).refreshBody();
+  platforms.create(50, 250, "ground").setScale(0.4).refreshBody();
+  platforms.create(750, 220, "ground").setScale(0.4).refreshBody();
 
   // The player and its settings
   player = this.physics.add.sprite(120, 500, "dude");
@@ -99,7 +100,6 @@ function create() {
 
   jewel = this.physics.add.sprite(100, 100, "jewel");
   jewel.setScale(0.1);
-
 
   guards = this.physics.add.group();
 
@@ -159,6 +159,7 @@ function collectJewel(player, jewel) {
     guard.setCollideWorldBounds(true);
    // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
     guard.allowGravity = false;
+}
 
   function hitGuard(player, guard) {
     this.physics.pause();
