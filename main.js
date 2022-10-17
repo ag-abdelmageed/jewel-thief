@@ -159,11 +159,15 @@ function create() {
   guards = this.physics.add.group();
 
   //  stops player from going through platforms
-  this.physics.add.collider(player, platforms, function (){
+  this.physics.add.collider(player, wallsH, function () {
     player.y = lastPosy;
     player.x = lastPosx;
   });
-  this.physics.add.collider(guards, platforms); 
+  this.physics.add.collider(player, wallsV, function () {
+    player.y = lastPosy;
+    player.x = lastPosx;
+  });
+  this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
@@ -184,8 +188,7 @@ function update() {
     lastPosy = player.y;
     player.x -= tileSize;
     player.anims.play("left", true);
-  } 
-  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+  } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
     lastPosx = player.x;
     lastPosy = player.y;
     player.x += tileSize;
@@ -195,12 +198,11 @@ function update() {
     lastPosx = player.x;
     lastPosy = player.y;
     player.y -= tileSize;
-  } 
-  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+  } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
     lastPosx = player.x;
     lastPosy = player.y;
     player.y += tileSize;
-  } 
+  }
 }
 
 function collectJewel(player, jewel) {
@@ -216,13 +218,12 @@ function collectJewel(player, jewel) {
   guard.allowGravity = false;
 }
 
-  function hitGuard(player, guard) {
-    this.physics.pause();
+function hitGuard(player, guard) {
+  this.physics.pause();
 
-    player.setTint(0xff0000);
+  player.setTint(0xff0000);
 
-    player.anims.play("turn");
+  player.anims.play("turn");
 
-    gameOver = true;
-  }
+  gameOver = true;
 }
