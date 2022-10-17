@@ -58,7 +58,11 @@ function create() {
     hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
   ) {
     // Loop through the row
-    for (let w = TILE_WIDTH / 2; w < 800; w += TILE_WIDTH + tileAdjustment) {
+    for (
+      let w = TILE_WIDTH / 2;
+      w < config.width;
+      w += TILE_WIDTH + tileAdjustment
+    ) {
       // Is the first row being generated?
       if (hl === CENTER_VERTICAL) {
         // White or blue tile?
@@ -102,7 +106,7 @@ function create() {
   }
 
   // The player and its settings
-  player = this.physics.add.sprite(20 + 6 * 40, CENTER_VERTICAL - 15, "dude");
+  player = this.physics.add.sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude");
 
   //  Player physics properties. Give the little guy a slight bounce.
   player.setBounce(0.2);
