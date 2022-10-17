@@ -31,6 +31,8 @@ var tileSize = 80;
 var moveTimer = 150;
 var lastPosx = 0;
 var lastPosy = 0;
+var screenWidth = 800;
+var screenHeight = 600;
 
 var game = new Phaser.Game(config);
 
@@ -119,14 +121,6 @@ function create() {
   player.setCollideWorldBounds(true);
   player.body.onWorldBounds = true;
 
-  //moves player back if they hit the screen bounds to keep them aligned in the center of each tile
-  /*player.body.world.on('worldbounds', function() {
-    console.log(player.x)
-    player.y = lastPosy;
-    player.x = lastPosx;
-    console.log(lastPosx)
-  });*/
-
   //  Our player animations, turning, walking left and walking right.
   this.anims.create({
     key: "left",
@@ -186,25 +180,35 @@ function update() {
 
   //Player movement
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x -= tileSize;
-    //player.anims.play("left", true);
-  } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x += tileSize;
-    //player.anims.play("right", true);
+    if (player.x - tileSize >= 0 ){
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.x -= tileSize;
+      //player.anims.play("left", true);
+    }
+  } 
+  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+    if (player.x + tileSize <= screenWidth){  
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.x += tileSize;
+      //player.anims.play("right", true);
+    }
   }
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.y -= tileSize;
-  } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.y += tileSize;
-  }
+    if (player.y - tileSize >= 0){
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.y -= tileSize;
+    }
+  } 
+  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+    if (player.y + tileSize <= screenHeight) {
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.y += tileSize;
+    }
+  } 
 }
 
 function collectJewel(player, jewel) {
