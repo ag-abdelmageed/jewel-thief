@@ -45,7 +45,6 @@ function preload() {
   this.load.spritesheet("dude", "assets/RobberGuySpriteV2.png", {
     frameWidth: 59, //32
     frameHeight: 96, //48
-    
   });
 }
 
@@ -157,7 +156,6 @@ function create() {
   );
   jewel.setScale(0.125);
 
-
   guards = this.physics.add.group();
 
   //  stops player from going through platforms
@@ -183,7 +181,6 @@ function update() {
   if (gameOver) {
     return;
   }
-
 
   //Player movement
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
@@ -221,13 +218,13 @@ function collectJewel(player, jewel) {
   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
   guard.allowGravity = false;
 
-function hitGuard(player, guard) {
-  this.physics.pause();
+  function hitGuard(player, guard) {
+    this.physics.pause();
 
-  player.setTint(0xff0000);
+    player.setTint(0xff0000);
 
-  player.anims.play("turn");
+    player.anims.play("turn");
 
-  gameOver = true;
+    gameOver = true;
+  }
 }
-
