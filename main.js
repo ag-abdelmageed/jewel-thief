@@ -50,6 +50,40 @@ function preload() {
   });
 }
 
+document.getElementById("level-select").addEventListener("change", (event) => {
+  switchLevel(event.target.value);
+});
+
+function switchLevel(level) {
+  game.destroy(true);
+  switch (level) {
+    case "1":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+    case "2":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+    case "3":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+    case "4":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+    case "5":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+    case "6":
+      config.scene.create = create;
+      game = new Phaser.Game(config);
+      break;
+  }
+}
+
 function create() {
   /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
@@ -180,15 +214,15 @@ function update() {
 
   //Player movement
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-    if (player.x - tileSize >= 0 ){
+    if (player.x - tileSize >= 0) {
       lastPosx = player.x;
       lastPosy = player.y;
       player.x -= tileSize;
       //player.anims.play("left", true);
     }
-  } 
+  }
   else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-    if (player.x + tileSize <= screenWidth){  
+    if (player.x + tileSize <= screenWidth) {
       lastPosx = player.x;
       lastPosy = player.y;
       player.x += tileSize;
@@ -196,19 +230,19 @@ function update() {
     }
   }
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
-    if (player.y - tileSize >= 0){
+    if (player.y - tileSize >= 0) {
       lastPosx = player.x;
       lastPosy = player.y;
       player.y -= tileSize;
     }
-  } 
+  }
   else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
     if (player.y + tileSize <= screenHeight) {
       lastPosx = player.x;
       lastPosy = player.y;
       player.y += tileSize;
     }
-  } 
+  }
 }
 
 function collectJewel(player, jewel) {
