@@ -23,11 +23,13 @@ var platforms;
 var cursors;
 var gameOver = false;
 var tileSize = 80;
+var moveIncrement = 10;
 var moveTimer = 150;
 var lastPosx = 0;
 var lastPosy = 0;
 var screenWidth = 800;
 var screenHeight = 600;
+var pauseKeyboard = false;
 
 var game = new Phaser.Game(config);
 
@@ -118,36 +120,63 @@ function update() {
   }
 
   //Player movement
-  if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-    if (player.x - tileSize >= 0 ){
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x -= tileSize;
-      player.anims.play("left", true);
+  if (pauseKeyboard == false){
+    if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
+      if (player.x - tileSize >= 0){
+        move("left")
+      }
+    } 
+    else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+      if (player.x + tileSize <= screenWidth){  
+        move("right")
+      }
     }
-  } 
-  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-    if (player.x + tileSize <= screenWidth){  
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x += tileSize;
-      player.anims.play("right", true);
-    }
+    if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+      if (player.y - tileSize >= 0){
+        move("up")
+      }
+    } 
+    else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+      if (player.y + tileSize <= screenHeight) {
+        move("down")
+      }
+    } 
   }
-  if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
-    if (player.y - tileSize >= 0){
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y -= tileSize;
-    }
-  } 
-  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
-    if (player.y + tileSize <= screenHeight) {
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y += tileSize;
-    }
-  } 
+}
+
+function animate(dir){
+  if (dir == "up"){
+    player.y -= tileSize;
+  }
+}
+
+function move(dir){
+  counter = 0;
+  if (dir == "up"){
+    pauseKeyboard = true;
+    lastPosx = player.x;
+    lastPosy = player.y;
+    //timedEvent = this.time.delayedCall(3000, animate, [], game);
+    animate(dir);
+    pauseKeyboard = false;
+  }
+  else if (dir == "left"){
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.x -= tileSize;
+    player.anims.play("left", true);
+  }
+  else if (dir == "right"){
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.x += tileSize;
+    player.anims.play("right", true);
+  }
+  else if (dir == "down"){
+    lastPosx = player.x;
+    lastPosy = player.y;
+    player.y += tileSize;
+  }
 }
 
 function collectJewel(player, jewel) {
