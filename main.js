@@ -1,12 +1,12 @@
 const CENTER_HORIZONTAL = 400;
-const CENTER_VERTICAL = 280.5;
-let TILE_WIDTH = 80;
-let TILE_HEIGHT = 80;
+const CENTER_VERTICAL = 300;
+let TILE_WIDTH = 40;
+let TILE_HEIGHT = 40;
 
 var config = {
   type: Phaser.AUTO,
   width: 800,
-  height: 560,
+  height: 600,
   physics: {
     default: "arcade",
     arcade: {
@@ -58,7 +58,7 @@ function switchLevel(level) {
   game.destroy(true);
   switch (level) {
     case "1":
-      config.scene.create = create1();
+      config.scene.create = create1;
       game = new Phaser.Game(config);
       break;
     case "2":
@@ -89,7 +89,7 @@ function create1() {
   let whiteTile = false;
   // Number of tiles from and including the middle row of tiles
   const bottom = CENTER_VERTICAL + 2 * TILE_HEIGHT;
-  const tileScale = 1.98;
+  const tileScale = 0.99;
   const tileAdjustment = 0 * tileScale;
 
   // Loop through the columns
@@ -218,14 +218,14 @@ function update() {
     if (player.x - tileSize >= 0) {
       lastPosx = player.x;
       lastPosy = player.y;
-      player.x -= tileSize;
+      player.x -= tileSize / 2;
       //player.anims.play("left", true);
     }
   } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
     if (player.x + tileSize <= screenWidth) {
       lastPosx = player.x;
       lastPosy = player.y;
-      player.x += tileSize;
+      player.x += tileSize / 2;
       //player.anims.play("right", true);
     }
   }
@@ -233,13 +233,13 @@ function update() {
     if (player.y - tileSize >= 0) {
       lastPosx = player.x;
       lastPosy = player.y;
-      player.y -= tileSize;
+      player.y -= tileSize / 2;
     }
   } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
     if (player.y + tileSize <= screenHeight) {
       lastPosx = player.x;
       lastPosy = player.y;
-      player.y += tileSize;
+      player.y += tileSize / 2;
     }
   }
 }
@@ -272,8 +272,8 @@ function create2() {
   /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
   // Number of tiles from and including the middle row of tiles
-  const bottom = CENTER_VERTICAL + 4 * TILE_HEIGHT;
-  const tileScale = 1.98;
+  const bottom = CENTER_VERTICAL + 8 * TILE_HEIGHT;
+  const tileScale = 0.99;
   const tileAdjustment = 0 * tileScale;
 
   // Loop through the columns
@@ -321,14 +321,8 @@ function create2() {
   wallsV = this.physics.add.staticGroup();
 
   // Generate the vertical maze walls
-  wallsV.create(20, CENTER_VERTICAL, "wallV");
-  wallsV.create(780, CENTER_VERTICAL, "wallV");
-
-  // Generate the horizontal maze walls
-  for (let i = 60; i < 800; i += 120) {
-    wallsH.create(i, CENTER_VERTICAL - 80, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 80, "wallH");
-  }
+  wallsV.create(CENTER_HORIZONTAL, CENTER_VERTICAL - 20, "wallV");
+  wallsV.create(CENTER_HORIZONTAL, CENTER_VERTICAL + 20, "wallV");
 
   // The player and its settings
   player = this.physics.add
@@ -390,64 +384,4 @@ function create2() {
   //this.physics.add.collider(player, guards, hitGuard, null, this);
 
   //Collision event
-}
-
-function update() {
-  if (gameOver) {
-    return;
-  }
-
-  //Player movement
-  if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-    if (player.x - tileSize >= 0) {
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x -= tileSize;
-      //player.anims.play("left", true);
-    }
-  } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-    if (player.x + tileSize <= screenWidth) {
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x += tileSize;
-      //player.anims.play("right", true);
-    }
-  }
-  if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
-    if (player.y - tileSize >= 0) {
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y -= tileSize;
-    }
-  } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
-    if (player.y + tileSize <= screenHeight) {
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y += tileSize;
-    }
-  }
-}
-
-function collectJewel(player, jewel) {
-  jewel.disableBody(true, true);
-
-  //TODO RUN GAMEOVER CODE
-
-  /*spawn guard code*/
-  var guard = guards.create(20, 16, "guard");
-  guard = guards.create(200, 500, "guard");
-  guard.setBounce(1);
-  guard.setCollideWorldBounds(true);
-  // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
-  guard.allowGravity = false;
-
-  function hitGuard(player, guard) {
-    this.physics.pause();
-
-    player.setTint(0xff0000);
-
-    player.anims.play("turn");
-
-    gameOver = true;
-  }
 }
