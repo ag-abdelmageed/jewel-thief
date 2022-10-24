@@ -16,7 +16,7 @@ var config = {
   },
   scene: {
     preload: preload,
-    create: create,
+    create: (create1, create2),
     update: update,
   },
 };
@@ -58,7 +58,7 @@ function switchLevel(level) {
   game.destroy(true);
   switch (level) {
     case "1":
-      config.scene.create = create1;
+      config.scene.create = create1();
       game = new Phaser.Game(config);
       break;
     case "2":
@@ -88,7 +88,7 @@ function create1() {
   /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
   // Number of tiles from and including the middle row of tiles
-  const bottom = CENTER_VERTICAL + 4 * TILE_HEIGHT;
+  const bottom = CENTER_VERTICAL + 2 * TILE_HEIGHT;
   const tileScale = 1.98;
   const tileAdjustment = 0 * tileScale;
 
