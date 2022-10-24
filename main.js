@@ -101,9 +101,10 @@ function create() {
 
   //  stops player from going through platforms
   this.physics.add.collider(player, platforms, function (){
-    player.y = lastPosy;
     player.x = lastPosx;
+    player.y = lastPosy;
   });
+
   this.physics.add.collider(guards, platforms); 
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
@@ -117,6 +118,11 @@ function create() {
 function update() {
   if (gameOver) {
     return;
+  }
+
+  function checkAllPlatforms(dir){
+    if (dir == "up"){
+    }
   }
 
   //Player movement
@@ -142,42 +148,39 @@ function update() {
       }
     } 
   }
-}
 
-function animate(dir){
-  if (dir == "up"){
-    player.y -= tileSize;
   }
-}
+  
 
-function move(dir){
-  counter = 0;
-  if (dir == "up"){
-    pauseKeyboard = true;
-    lastPosx = player.x;
-    lastPosy = player.y;
-    //timedEvent = this.time.delayedCall(3000, animate, [], game);
-    animate(dir);
-    pauseKeyboard = false;
+  function move(dir){
+    counter = 0;
+    if (dir == "up"){
+      pauseKeyboard = true;
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.y -= tileSize;
+      pauseKeyboard = false;
+    }
+    else if (dir == "left"){
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.x -= tileSize;
+      player.anims.play("left", true);
+    }
+    else if (dir == "right"){
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.x += tileSize;
+      player.anims.play("right", true);
+    }
+    else if (dir == "down"){
+      lastPosx = player.x;
+      lastPosy = player.y;
+      player.y += tileSize;
+    }
   }
-  else if (dir == "left"){
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x -= tileSize;
-    player.anims.play("left", true);
-  }
-  else if (dir == "right"){
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.x += tileSize;
-    player.anims.play("right", true);
-  }
-  else if (dir == "down"){
-    lastPosx = player.x;
-    lastPosy = player.y;
-    player.y += tileSize;
-  }
-}
+
+
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
