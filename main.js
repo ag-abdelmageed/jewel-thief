@@ -1,3 +1,8 @@
+const CENTER_HORIZONTAL = 400;
+const CENTER_VERTICAL = 300;
+let TILE_WIDTH = 40;
+let TILE_HEIGHT = 40;
+
 var config = {
   type: Phaser.AUTO,
   width: 800,
@@ -35,35 +40,83 @@ var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("checkerboard", "assets/checkerboard.png");
-  this.load.image("ground", "assets/Brickwall.png");
+  this.load.image("blueT", "assets/tileBlue.png");
+  this.load.image("whiteT", "assets/tileWhite.png");
+  this.load.image("wallV", "assets/wallV.png");
+  this.load.image("wallH", "assets/wallH.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
-  this.load.spritesheet("dude", "assets/dude.png", {
-    frameWidth: 32,
-    frameHeight: 48,
+  this.load.spritesheet("dude", "assets/RobberGuySpriteV2.png", {
+    frameWidth: 59, //32
+    frameHeight: 96, //48
   });
 }
 
 function create() {
-  //  A simple background for our game
-  background = this.add.image(400, 300, "checkerboard");
-  background.setScale(2)  
+  /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
+  let whiteTile = false;
+  const bottom = 380;
+  const tileScale = 0.99;
+  const tileAdjustment = 0 * tileScale;
 
-  //  The platforms group contains the ground and the 2 ledges we can jump on
-  platforms = this.physics.add.staticGroup();
+  // Loop through the columns
+  for (
+    let hl = CENTER_VERTICAL, hu = CENTER_VERTICAL;
+    hl < bottom;
+    hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
+  ) {
+    // Loop through the row
+    for (
+      let w = TILE_WIDTH / 2;
+      w < config.width;
+      w += TILE_WIDTH + tileAdjustment
+    ) {
+      // Is the first row being generated?
+      if (hl === CENTER_VERTICAL) {
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
+        } else {
+          this.add.image(w, hl, "blueT").setScale(tileScale);
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
+      } else {
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, hu, "whiteT").setScale(tileScale);
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
+        } else {
+          this.add.image(w, hu, "blueT").setScale(tileScale);
+          this.add.image(w, hl, "blueT").setScale(tileScale);
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
+      }
+    }
+    // Alternate orders for row
+    whiteTile = !whiteTile;
+  }
 
-  //  Here we create the ground.
-  //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-  platforms.create(400, 568, "ground").setScale(0.4).refreshBody();
+  // GENERATE WALLS ---------------------------------------------------------------------
+  // Create the horizontal walls and the vertical walls
+  wallsH = this.physics.add.staticGroup();
+  wallsV = this.physics.add.staticGroup();
 
-  //  Now let's create some ledges
+  // Generate the vertical maze walls
+  wallsV.create(20, CENTER_VERTICAL, "wallV");
+  wallsV.create(780, CENTER_VERTICAL, "wallV");
 
-  platforms.create(600, 400, "ground").setScale(0.4).refreshBody();
-  platforms.create(50, 250, "ground").setScale(0.4).refreshBody();
-  platforms.create(750, 220, "ground").setScale(0.4).refreshBody();
+  // Generate the horizontal maze walls
+  for (let i = 60; i < 800; i += 120) {
+    wallsH.create(i, CENTER_VERTICAL - 80, "wallH");
+    wallsH.create(i, CENTER_VERTICAL + 80, "wallH");
+  }
 
   // The player and its settings
-  player = this.physics.add.sprite(120, 500, "dude");
+  player = this.physics.add
+    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude")
+    .setScale(0.6);
 
   //  Player physics properties. Give the little guy a slight bounce.
   //player.setBounce(0.2);
@@ -94,18 +147,26 @@ function create() {
   //  Input Events
   cursors = this.input.keyboard.createCursorKeys();
 
-  jewel = this.physics.add.sprite(100, 100, "jewel");
-  jewel.setScale(0.1);
+  jewel = this.physics.add.sprite(
+    800 - 20 - 6 * 40,
+    CENTER_VERTICAL - 10,
+    "jewel"
+  );
+  jewel.setScale(0.125);
 
   guards = this.physics.add.group();
 
   //  stops player from going through platforms
-  this.physics.add.collider(player, platforms, function (){
+  this.physics.add.collider(player, wallsH, function () {
+    player.y = lastPosy;
     player.x = lastPosx;
     player.y = lastPosy;
   });
-
-  this.physics.add.collider(guards, platforms); 
+  this.physics.add.collider(player, wallsV, function () {
+    player.y = lastPosy;
+    player.x = lastPosx;
+  });
+  this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
@@ -165,13 +226,13 @@ function update() {
       lastPosx = player.x;
       lastPosy = player.y;
       player.x -= tileSize;
-      player.anims.play("left", true);
+      //player.anims.play("left", true);
     }
     else if (dir == "right"){
       lastPosx = player.x;
       lastPosy = player.y;
       player.x += tileSize;
-      player.anims.play("right", true);
+      //player.anims.play("right", true);
     }
     else if (dir == "down"){
       lastPosx = player.x;
@@ -184,16 +245,16 @@ function update() {
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
-    //TODO RUN GAMEOVER CODE
-    
-    /*spawn guard code*/
-    var guard = guards.create(20, 16, "guard");
-    guard = guards.create(200, 500, "guard");
-    guard.setBounce(1);
-    guard.setCollideWorldBounds(true);
-   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    guard.allowGravity = false;
-}
+
+  //TODO RUN GAMEOVER CODE
+
+  /*spawn guard code*/
+  var guard = guards.create(20, 16, "guard");
+  guard = guards.create(200, 500, "guard");
+  guard.setBounce(1);
+  guard.setCollideWorldBounds(true);
+  // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  guard.allowGravity = false;
 
   function hitGuard(player, guard) {
     this.physics.pause();
@@ -204,4 +265,4 @@ function collectJewel(player, jewel) {
 
     gameOver = true;
   }
-
+}
