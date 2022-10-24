@@ -1,12 +1,12 @@
 const CENTER_HORIZONTAL = 400;
-const CENTER_VERTICAL = 300;
-let TILE_WIDTH = 40;
-let TILE_HEIGHT = 40;
+const CENTER_VERTICAL = 280.5;
+let TILE_WIDTH = 80;
+let TILE_HEIGHT = 80;
 
 var config = {
   type: Phaser.AUTO,
   width: 800,
-  height: 600,
+  height: 560,
   physics: {
     default: "arcade",
     arcade: {
@@ -87,8 +87,9 @@ function switchLevel(level) {
 function create() {
   /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
   let whiteTile = false;
-  const bottom = 380;
-  const tileScale = 0.99;
+  // Number of tiles from and including the middle row of tiles
+  const bottom = CENTER_VERTICAL + 4 * TILE_HEIGHT;
+  const tileScale = 1.98;
   const tileAdjustment = 0 * tileScale;
 
   // Loop through the columns
@@ -220,8 +221,7 @@ function update() {
       player.x -= tileSize;
       //player.anims.play("left", true);
     }
-  }
-  else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+  } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
     if (player.x + tileSize <= screenWidth) {
       lastPosx = player.x;
       lastPosy = player.y;
@@ -235,8 +235,7 @@ function update() {
       lastPosy = player.y;
       player.y -= tileSize;
     }
-  }
-  else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+  } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
     if (player.y + tileSize <= screenHeight) {
       lastPosx = player.x;
       lastPosy = player.y;
