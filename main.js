@@ -321,12 +321,41 @@ function create2() {
   wallsV = this.physics.add.staticGroup();
 
   // Generate the vertical maze walls
+  // Jewel walls
   wallsV.create(CENTER_HORIZONTAL, CENTER_VERTICAL - 20, "wallV");
   wallsV.create(CENTER_HORIZONTAL, CENTER_VERTICAL + 20, "wallV");
+  // Border walls left
+  wallsV.create(CENTER_HORIZONTAL - 5 * 40, CENTER_VERTICAL, "wallV");
+  wallsV.create(CENTER_HORIZONTAL - 5 * 40, CENTER_VERTICAL - 120, "wallV");
+  wallsV.create(CENTER_HORIZONTAL - 5 * 40, CENTER_VERTICAL + 120, "wallV");
+  wallsV.create(CENTER_HORIZONTAL - 5 * 40, CENTER_VERTICAL - 220, "wallV");
+  wallsV.create(CENTER_HORIZONTAL - 5 * 40, CENTER_VERTICAL + 220, "wallV");
+  // Border walls right
+  wallsV.create(CENTER_HORIZONTAL + 9 * 40, CENTER_VERTICAL, "wallV");
+  wallsV.create(CENTER_HORIZONTAL + 9 * 40, CENTER_VERTICAL - 120, "wallV");
+  wallsV.create(CENTER_HORIZONTAL + 9 * 40, CENTER_VERTICAL + 120, "wallV");
+  wallsV.create(CENTER_HORIZONTAL + 9 * 40, CENTER_VERTICAL - 220, "wallV");
+  wallsV.create(CENTER_HORIZONTAL + 9 * 40, CENTER_VERTICAL + 220, "wallV");
+
+  // Generate the horizontal maze walls
+  // Jewel walls
+  wallsH.create(CENTER_HORIZONTAL + 40, CENTER_VERTICAL - 100, "wallH");
+  wallsH.create(CENTER_HORIZONTAL + 40, CENTER_VERTICAL + 100, "wallH");
+  wallsH.create(CENTER_HORIZONTAL + 120, CENTER_VERTICAL - 100, "wallH");
+  wallsH.create(CENTER_HORIZONTAL + 120, CENTER_VERTICAL + 100, "wallH");
+  // Border walls top and bottom
+  for (
+    let i = CENTER_HORIZONTAL - 4 * 40;
+    i < CENTER_HORIZONTAL + 9 * 40;
+    i += 40
+  ) {
+    wallsH.create(i, CENTER_VERTICAL - 300, "wallH");
+    wallsH.create(i, CENTER_VERTICAL + 300, "wallH");
+  }
 
   // The player and its settings
   player = this.physics.add
-    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude")
+    .sprite(20 + 7 * 40, CENTER_VERTICAL - 12, "dude")
     .setScale(0.6);
 
   //  Player physics properties. Give the little guy a slight bounce.
@@ -359,7 +388,7 @@ function create2() {
   cursors = this.input.keyboard.createCursorKeys();
 
   jewel = this.physics.add.sprite(
-    800 - 20 - 6 * 40,
+    800 - 20 - 7 * 40,
     CENTER_VERTICAL - 10,
     "jewel"
   );
