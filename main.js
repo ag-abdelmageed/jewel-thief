@@ -441,6 +441,7 @@ function update() {
       lastPosy = player.y;
       player.x += tileSize;
       //player.anims.play("right", true);
+    }
     else if (dir == "down"){
       lastPosx = player.x;
       lastPosy = player.y;
