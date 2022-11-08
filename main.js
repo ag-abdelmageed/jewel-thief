@@ -44,9 +44,9 @@ function preload() {
   this.load.image("wallH", "assets/wallH.png");
   this.load.image("jewel", "assets/jewel.png");
   this.load.image("guard", "assets/bomb.png");
-  this.load.spritesheet("dude", "assets/RobberGuySpriteV2.png", {
-    frameWidth: 59, //32
-    frameHeight: 96, //48
+  this.load.spritesheet("dude", "assets/Robber.png", {
+    frameWidth: 190, 
+    frameHeight: 340, 
   });
 }
 
@@ -113,8 +113,8 @@ function create() {
 
   // The player and its settings
   player = this.physics.add
-    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude")
-    .setScale(0.6);
+    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude") //
+    .setScale(.2);
 
   //  Player physics properties. Give the little guy a slight bounce.
   //player.setBounce(0.2);
@@ -124,22 +124,28 @@ function create() {
   //  Our player animations, turning, walking left and walking right.
   this.anims.create({
     key: "left",
-    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
-    frameRate: 10,
-    repeat: -1,
+    frames: this.anims.generateFrameNumbers("dude", { start: 2, end: 2 }),
+    frameRate: 15,
+    repeat: 1,
   });
 
   this.anims.create({
     key: "turn",
-    frames: [{ key: "dude", frame: 4 }],
+    frames: [{ key: "dude", frame: 0 }],
+    frameRate: 20,
+  });
+
+  this.anims.create({
+    key: "back",
+    frames: [{ key: "dude", frame: 9 }],
     frameRate: 20,
   });
 
   this.anims.create({
     key: "right",
-    frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
-    frameRate: 10,
-    repeat: -1,
+    frames: this.anims.generateFrameNumbers("dude", { start: 6, end: 6 }),
+    frameRate: 15,
+    repeat: 1,
   });
 
   //  Input Events
@@ -168,7 +174,7 @@ function create() {
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
 
-  //this.physics.add.collider(player, guards, hitGuard, null, this);
+  this.physics.add.collider(player, guards, hitGuard, null, this);
 
   //Collision event
 }
@@ -179,12 +185,13 @@ function update() {
   }
 
   //Player movement
+  
   if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
     if (player.x - tileSize >= 0 ){
       lastPosx = player.x;
       lastPosy = player.y;
       player.x -= tileSize;
-      //player.anims.play("left", true);
+      player.anims.play("left", true);
     }
   } 
   else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
@@ -192,14 +199,16 @@ function update() {
       lastPosx = player.x;
       lastPosy = player.y;
       player.x += tileSize;
-      //player.anims.play("right", true);
+      player.anims.play("right", true);
     }
-  }
+  
+  } 
   if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
     if (player.y - tileSize >= 0){
       lastPosx = player.x;
       lastPosy = player.y;
       player.y -= tileSize;
+      player.anims.play("back", true);
     }
   } 
   else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
@@ -207,8 +216,11 @@ function update() {
       lastPosx = player.x;
       lastPosy = player.y;
       player.y += tileSize;
+      player.anims.play("turn", true);
     }
   } 
+
+  
 }
 
 function collectJewel(player, jewel) {
@@ -217,20 +229,22 @@ function collectJewel(player, jewel) {
   //TODO RUN GAMEOVER CODE
 
   /*spawn guard code*/
-  var guard = guards.create(20, 16, "guard");
-  guard = guards.create(200, 500, "guard");
+  var guard = guards.create(100, 300, "guard").setScale(3);
+  guard = guards.create(700, 300, "guard").setScale(3);
   guard.setBounce(1);
   guard.setCollideWorldBounds(true);
   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
   guard.allowGravity = false;
 
-  function hitGuard(player, guard) {
-    this.physics.pause();
+  this.physics.add.overlap(player, guard, hitGuard, null, this);
+}
 
-    player.setTint(0xff0000);
+function hitGuard(player, guard) {
+  this.physics.pause();
 
-    player.anims.play("turn");
+  player.setTint(0xff0000);
 
-    gameOver = true;
-  }
+  player.anims.play("turn");
+
+  gameOver = true;
 }
