@@ -294,15 +294,15 @@ function create3() {
   wallsH.create(40, 140, "wallH");
 
 for(let i = 0; i < 5; ++i){
-  wallsV.create(180+ 80* i, 100+ 80* i, "wallV");
-  wallsV.create(100+80* i, 180+80* i, "wallV");
-  wallsH.create(220+80* i, 140+80* i, "wallH");
-  wallsH.create(140+80* i, 220+80* i, "wallH");
+  wallsV.create(180 + 80*i, 100 + 80*i, "wallV");
+  wallsV.create(100 + 80*i, 180 + 80*i, "wallV");
+  wallsH.create(220 + 80*i, 140 + 80*i, "wallH");
+  wallsH.create(140 + 80*i, 220 + 80*i, "wallH");
 }
 
   // The player and its settings
   player = this.physics.add
-    .sprite(60, 100, "dude")
+    .sprite(500, 700, "dude")
     .setScale(0.2);
 
   //Player physics properties. Give the little guy a slight bounce.
@@ -351,7 +351,7 @@ for(let i = 0; i < 5; ++i){
     player.y = lastPosy;
     player.x = lastPosx;
   });
-  this.physics.add.collider(guards, platforms);
+  //this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
@@ -448,22 +448,20 @@ function update() {
       player.x += tileSize;
       player.anims.play("right", true);
     }
-  
-  } 
-  if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+/*  if (dir == "up") {
     if (player.y - tileSize >= 0){
       lastPosx = player.x;
       lastPosy = player.y;
       player.y -= tileSize;
       player.anims.play("back", true);
-    }
-  }
+    }*/
     else if (dir == "down"){
       lastPosx = player.x;
       lastPosy = player.y;
       player.y += tileSize;
       player.anims.play("turn", true);
     }
+  }
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
