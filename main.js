@@ -336,15 +336,6 @@ for(let i = 0; i < 5; ++i){
 
   guards = this.physics.add.group();
 
-  //  stops player from going through platforms
-  this.physics.add.collider(player, wallsH, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
-  this.physics.add.collider(player, wallsV, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
   this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
