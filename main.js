@@ -24,17 +24,18 @@ var config = {
 var player;
 var jewels;
 var guards;
-var platforms;
 var cursors;
 var gameOver = false;
-var tileSize = 80;
+var tileSize = TILE_WIDTH;
 var moveIncrement = 10;
 var moveTimer = 150;
 var lastPosx = 0;
 var lastPosy = 0;
-var screenWidth = 800;
-var screenHeight = 600;
+var screenWidth = CENTER_HORIZONTAL*2;
+var screenHeight = CENTER_VERTICAL*2;
 var pauseKeyboard = false;
+var startincX;
+var srartincY;
 
 var game = new Phaser.Game(config);
 
@@ -106,12 +107,23 @@ function create() {
   // Generate the vertical maze walls
   wallsV.create(20, CENTER_VERTICAL, "wallV");
   wallsV.create(780, CENTER_VERTICAL, "wallV");
+  
 
   // Generate the horizontal maze walls
+  c=0;
   for (let i = 60; i < 800; i += 120) {
-    wallsH.create(i, CENTER_VERTICAL - 80, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 80, "wallH");
+    wall = wallsH.create(i, CENTER_VERTICAL - 80, "wallH");
+    wall.name = "wallH"+c;
+    c++;
   }
+  c=1
+  for (let i = 60; i < 800; i += 120) {
+    wallsH.create(i, CENTER_VERTICAL + 80, "wallH");
+    wall.name = "wallH"+(c);
+    c++
+  }
+  console.log(wallsH.getChildren())
+  
 
   // The player and its settings
   player = this.physics.add
@@ -157,16 +169,15 @@ function create() {
   guards = this.physics.add.group();
 
   //  stops player from going through platforms
-  this.physics.add.collider(player, wallsH, function () {
+  /*this.physics.add.collider(player, wallsH, function () {
     player.y = lastPosy;
     player.x = lastPosx;
-    player.y = lastPosy;
   });
   this.physics.add.collider(player, wallsV, function () {
     player.y = lastPosy;
     player.x = lastPosx;
-  });
-  this.physics.add.collider(guards, platforms);
+  });*/
+  this.physics.add.collider(guards, wallsH);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
@@ -181,31 +192,60 @@ function update() {
     return;
   }
 
-  function checkAllPlatforms(dir){
-    if (dir == "up"){
-    }
-  }
-
   //Player movement
+  var flag = false;
+  var flag = false;
   if (pauseKeyboard == false){
     if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
       if (player.x - tileSize >= 0){
-        move("left")
+        wallsV.getChildren().forEach(function (sprite) {
+          if ((player.x - tileSize/2 <= (sprite.x)+sprite.width) && (player.x - tileSize/2 >= (sprite.x)-sprite.width)){
+            console.log("left")
+            flag = true;
+          }
+        });
+        if (flag == false){
+          move("left")
+        }
       }
     } 
     else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
       if (player.x + tileSize <= screenWidth){  
-        move("right")
+        wallsV.getChildren().forEach(function (sprite) {
+          if ((player.x + tileSize/2 <= (sprite.x)+sprite.width) && (player.x + tileSize/2 >= (sprite.x)-sprite.width)){
+            console.log("TEST")
+            flag = true;
+          }
+        });
+        if (flag == false){
+          move("right")
+        }
       }
     }
     if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
       if (player.y - tileSize >= 0){
-        move("up")
+        wallsH.getChildren().forEach(function (sprite) {
+          if ((player.y - tileSize/2 <= (sprite.y)+sprite.height) && (player.y - tileSize/2 >= (sprite.y)-sprite.height)){
+            console.log("up")
+            flag = true;
+          }
+        });
+        if (flag == false){
+          move("up")
+        }
       }
     } 
     else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
       if (player.y + tileSize <= screenHeight) {
-        move("down")
+        wallsH.getChildren().forEach(function (sprite) {
+          if ((player.y + tileSize/2 <= (sprite.y)+sprite.height) && (player.y + tileSize/2 >= (sprite.y)-sprite.height)){
+            console.log("TEST")
+            flag = true;
+          }
+        });
+        if (flag == false){
+          move("down")
+        }
       }
     } 
   }
@@ -264,5 +304,18 @@ function collectJewel(player, jewel) {
     player.anims.play("turn");
 
     gameOver = true;
+  }
+
+  function checkNextMove(dir){
+    var xFlag = false;
+    var yFlag = false;
+    wallsHXValues = wallsH.getChildren().forEach(function (sprite) {
+      if (dir == "right"){
+
+      }
+      else if (dir == "left"){
+
+      }
+    });
   }
 }
