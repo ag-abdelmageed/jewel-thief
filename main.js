@@ -464,7 +464,6 @@ function update() {
       player.y += tileSize;
       player.anims.play("turn", true);
     }
-  }
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
@@ -504,4 +503,3 @@ function hitGuard(player, guard) {
       }
     });
   }
-}
