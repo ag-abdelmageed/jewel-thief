@@ -16,7 +16,7 @@ var config = {
   },
   scene: {
     preload: preload,
-    create: create3,
+    create: create1,
     update: update,
   },
 };
@@ -280,14 +280,10 @@ for(let i = 0; i < 5; ++i){
   wallsH.create(140+80* i, 220+80* i, "wallH");
 }
 
-
-
-
-
   // The player and its settings
   player = this.physics.add
     .sprite(60, 100, "dude")
-    .setScale(0.1);
+    .setScale(0.2);
 
   //Player physics properties. Give the little guy a slight bounce.
   player.setCollideWorldBounds(true);
