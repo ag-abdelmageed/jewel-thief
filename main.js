@@ -36,6 +36,8 @@ var screenHeight = CENTER_VERTICAL*2;
 var pauseKeyboard = false;
 var startincX;
 var srartincY;
+var currentTime;
+var previousTime;
 
 var game = new Phaser.Game(config);
 
@@ -156,7 +158,6 @@ function create1() {
     wall.name = "wallH"+(c);
     c++
   }
-  console.log(wallsH.getChildren())
   
 
   // The player and its settings
@@ -346,6 +347,7 @@ for(let i = 0; i < 5; ++i){
   //Collision event
 }
 
+var moving = false;
 function update() {
   if (gameOver) {
     return;
@@ -353,17 +355,16 @@ function update() {
 
   //Player movement
   var flag = false;
-  var flag = false;
-  if (pauseKeyboard == false){
+  if (pauseKeyboard == false){  
     if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
       if (player.x - tileSize >= 0){
         wallsV.getChildren().forEach(function (sprite) {
           if ((player.x - tileSize/2 <= (sprite.x)+sprite.width) && (player.x - tileSize/2 >= (sprite.x)-sprite.width)){
-            console.log("left")
             flag = true;
           }
         });
         if (flag == false){
+          moving = true;
           move("left")
         }
       }
@@ -372,11 +373,11 @@ function update() {
       if (player.x + tileSize <= screenWidth){  
         wallsV.getChildren().forEach(function (sprite) {
           if ((player.x + tileSize/2 <= (sprite.x)+sprite.width) && (player.x + tileSize/2 >= (sprite.x)-sprite.width)){
-            console.log("TEST")
             flag = true;
           }
         });
         if (flag == false){
+          moving = true;
           move("right")
         }
       }
@@ -385,11 +386,11 @@ function update() {
       if (player.y - tileSize >= 0){
         wallsH.getChildren().forEach(function (sprite) {
           if ((player.y - tileSize/2 <= (sprite.y)+sprite.height) && (player.y - tileSize/2 >= (sprite.y)-sprite.height)){
-            console.log("up")
             flag = true;
           }
         });
         if (flag == false){
+          moving = true;
           move("up")
         }
       }
@@ -398,47 +399,54 @@ function update() {
       if (player.y + tileSize <= screenHeight) {
         wallsH.getChildren().forEach(function (sprite) {
           if ((player.y + tileSize/2 <= (sprite.y)+sprite.height) && (player.y + tileSize/2 >= (sprite.y)-sprite.height)){
-            console.log("TEST")
             flag = true;
           }
         });
         if (flag == false){
-          move("down")
+          moving = true;
+          move("down") 
         }
       }
     } 
-  }
 
   }
+
+}
   
 
-  function move(dir){
-    counter = 0;
-    if (dir == "up"){
-      pauseKeyboard = true;
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y -= tileSize;
-      pauseKeyboard = false;
-    }
-    else if (dir == "left"){
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x -= tileSize;
-      //player.anims.play("left", true);
-    }
-    else if (dir == "right"){
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.x += tileSize;
-      //player.anims.play("right", true);
-    }
-    else if (dir == "down"){
-      lastPosx = player.x;
-      lastPosy = player.y;
-      player.y += tileSize;
+//TODO GET THE MOVEMENT TO WORK
+//it is not stopping which is an issue
+function move(dir){
+  counter = 0;
+  previousTime = new Date();
+  var prevSec = previousTime.getTime()
+  while (counter < tileSize){
+    currentTime = new Date();
+    currentSec = currentTime.getTime()
+    if (currentSec - prevSec >= 10){
+      if (dir == "up"){
+        //player.anims.play("up", true);
+        player.y -=1
+      }
+      else if (dir == "down"){
+        //player.anims.play("down", true);
+        player.y +=1
+      }
+      else if (dir == "right"){
+        //player.anims.play("right", true);
+        //player.x += 1
+        player.body.setVelocity(25, 0)
+      }
+      else if (dir == "left"){
+        //player.anims.play("left", true);
+        player.x -=1;
+      }
+      prevSec = currentSec;
+      counter ++;
     }
   }
+  moving = false;
+}
 
 function collectJewel(player, jewel) {
   jewel.disableBody(true, true);
@@ -463,16 +471,4 @@ function collectJewel(player, jewel) {
     gameOver = true;
   }
 
-  function checkNextMove(dir){
-    var xFlag = false;
-    var yFlag = false;
-    wallsHXValues = wallsH.getChildren().forEach(function (sprite) {
-      if (dir == "right"){
-
-      }
-      else if (dir == "left"){
-
-      }
-    });
-  }
 }
