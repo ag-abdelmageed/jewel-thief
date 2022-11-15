@@ -16,7 +16,7 @@ var config = {
   },
   scene: {
     preload: preload,
-    create: (create1, create2),
+    create: create2,
     update: update,
   },
 };
@@ -65,7 +65,7 @@ function switchLevel(level) {
       game = new Phaser.Game(config);
       break;
     case "2":
-      config.scene.create = create;
+      config.scene.create = create2;
       game = new Phaser.Game(config);
       break;
     case "3":
@@ -160,7 +160,7 @@ function create1() {
 
   // The player and its settings
   player = this.physics.add
-    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude") //
+    .sprite(20 + 6 * 40, CENTER_VERTICAL - 12, "dude")
     .setScale(0.2);
 
   //  Player physics properties. Give the little guy a slight bounce.
@@ -217,6 +217,157 @@ function create1() {
     player.x = lastPosx;
   });*/
   this.physics.add.collider(guards, wallsH);
+
+  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+  this.physics.add.overlap(player, jewel, collectJewel, null, this);
+
+  //this.physics.add.collider(player, guards, hitGuard, null, this);
+
+  //Collision event
+}
+
+function create2() {
+  /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
+  let whiteTile = false;
+  // Number of tiles from and including the middle row of tiles
+  const bottom = CENTER_VERTICAL + 8 * TILE_HEIGHT;
+  const tileScale = 0.99;
+  const tileAdjustment = 0 * tileScale;
+
+  // Loop through the columns
+  for (
+    let hl = CENTER_VERTICAL, hu = CENTER_VERTICAL;
+    hl < bottom;
+    hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
+  ) {
+    // Loop through the row
+    for (
+      let w = TILE_WIDTH / 2;
+      w < config.width;
+      w += TILE_WIDTH + tileAdjustment
+    ) {
+      // Is the first row being generated?
+      if (hl === CENTER_VERTICAL) {
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
+        } else {
+          this.add.image(w, hl, "blueT").setScale(tileScale);
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
+      } else {
+        // White or blue tile?
+        if (whiteTile) {
+          this.add.image(w, hu, "whiteT").setScale(tileScale);
+          this.add.image(w, hl, "whiteT").setScale(tileScale);
+        } else {
+          this.add.image(w, hu, "blueT").setScale(tileScale);
+          this.add.image(w, hl, "blueT").setScale(tileScale);
+        }
+        // Switch colors
+        whiteTile = !whiteTile;
+      }
+    }
+    // Alternate orders for row
+    whiteTile = !whiteTile;
+  }
+
+  // GENERATE WALLS ---------------------------------------------------------------------
+  // Create the horizontal walls and the vertical walls
+  wallsH = this.physics.add.staticGroup();
+  wallsV = this.physics.add.staticGroup();
+
+  // Generate the vertical maze walls
+  wallsV.create(580, 2 * CENTER_VERTICAL - 220, "wallV");
+  wallsV.create(20 + 2 * 40, 2 * CENTER_VERTICAL - 60, "wallV");
+  wallsV.create(20 + 2 * 40, 2 * CENTER_VERTICAL - 140, "wallV");
+  wallsV.create(20 + 2 * 40, 2 * CENTER_VERTICAL - 300, "wallV");
+  wallsV.create(20 + 2 * 40, 2 * CENTER_VERTICAL - 380, "wallV");
+
+  wallsV.create(20 + 18 * 40, 2 * CENTER_VERTICAL - 60, "wallV");
+  wallsV.create(20 + 18 * 40, 2 * CENTER_VERTICAL - 140, "wallV");
+  wallsV.create(20 + 18 * 40, 2 * CENTER_VERTICAL - 260, "wallV");
+  wallsV.create(20 + 18 * 40, 2 * CENTER_VERTICAL - 380, "wallV");
+
+  // Generate the horizontal maze walls
+  // Bottom walls
+  c = 0;
+  for (let i = 180; i < 560; i += 120, c++) {
+    wall = wallsH.create(i, 2 * CENTER_VERTICAL - 20, "wallH");
+    wall = wallsH.create(i, 2 * CENTER_VERTICAL - 180, "wallH");
+    //wall.name = "wallH" + c;
+  }
+  wallsH.create(660, 2 * CENTER_VERTICAL - 20, "wallH");
+
+  // Middle walls
+  c = 0;
+  for (let i = 180; i < 560; i += 120, c++) {
+    wall = wallsH.create(i, 2 * CENTER_VERTICAL - 260, "wallH");
+    wall = wallsH.create(i, 2 * CENTER_VERTICAL - 420, "wallH");
+    //wall.name = "wallH" + c;
+  }
+  wallsH.create(660, 2 * CENTER_VERTICAL - 420, "wallH");
+
+  // The player and its settings
+  player = this.physics.add
+    .sprite(20 + 4 * 40, 2 * CENTER_VERTICAL - 115, "dude")
+    .setScale(0.2);
+
+  //  Player physics properties. Give the little guy a slight bounce.
+  //player.setBounce(0.2);
+  player.setCollideWorldBounds(true);
+  player.body.onWorldBounds = true;
+
+  //  Our player animations, turning, walking left and walking right.
+  this.anims.create({
+    key: "left",
+    frames: this.anims.generateFrameNumbers("dude", { start: 2, end: 2 }),
+    frameRate: 15,
+    repeat: 1,
+  });
+
+  this.anims.create({
+    key: "turn",
+    frames: [{ key: "dude", frame: 0 }],
+    frameRate: 20,
+  });
+
+  this.anims.create({
+    key: "back",
+    frames: [{ key: "dude", frame: 9 }],
+    frameRate: 20,
+  });
+
+  this.anims.create({
+    key: "right",
+    frames: this.anims.generateFrameNumbers("dude", { start: 6, end: 6 }),
+    frameRate: 15,
+    repeat: 1,
+  });
+
+  //  Input Events
+  cursors = this.input.keyboard.createCursorKeys();
+
+  jewel = this.physics.add.sprite(
+    800 - 20 - 6 * 40,
+    CENTER_VERTICAL - 10,
+    "jewel"
+  );
+  jewel.setScale(0.125);
+
+  guards = this.physics.add.group();
+
+  //  stops player from going through platforms
+  this.physics.add.collider(player, wallsH, () => {
+    player.y = lastPosy;
+    player.x = lastPosx;
+  });
+  this.physics.add.collider(player, wallsV, () => {
+    player.y = lastPosy;
+    player.x = lastPosx;
+  });
+  //this.physics.add.collider(guards, platforms);
 
   //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   this.physics.add.overlap(player, jewel, collectJewel, null, this);
@@ -359,73 +510,70 @@ function create3() {
 }
 
 function update() {
-  if (gameOver) {
-    return;
-  }
-
-  //Player movement
-  var flag = false;
-  var flag = false;
-  if (pauseKeyboard == false) {
-    if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
-      if (player.x - tileSize >= 0) {
-        wallsV.getChildren().forEach(function (sprite) {
-          if (
-            player.x - tileSize / 2 <= sprite.x + sprite.width &&
-            player.x - tileSize / 2 >= sprite.x - sprite.width
-          ) {
-            console.log("left");
-            flag = true;
+  if (!gameOver) {
+    //Player movement
+    var flag = false;
+    if (pauseKeyboard == false) {
+      if (this.input.keyboard.checkDown(cursors.left, moveTimer)) {
+        if (player.x - tileSize >= 0) {
+          wallsV.getChildren().forEach(function (sprite) {
+            if (
+              player.x - tileSize / 2 <= sprite.x + sprite.width &&
+              player.x - tileSize / 2 >= sprite.x - sprite.width
+            ) {
+              console.log("left");
+              flag = true;
+            }
+          });
+          if (flag == false) {
+            move("left");
           }
-        });
-        if (flag == false) {
-          move("left");
+        }
+      } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
+        if (player.x + tileSize <= screenWidth) {
+          wallsV.getChildren().forEach(function (sprite) {
+            if (
+              player.x + tileSize / 2 <= sprite.x + sprite.width &&
+              player.x + tileSize / 2 >= sprite.x - sprite.width
+            ) {
+              console.log("TEST");
+              flag = true;
+            }
+          });
+          if (flag == false) {
+            move("right");
+          }
         }
       }
-    } else if (this.input.keyboard.checkDown(cursors.right, moveTimer)) {
-      if (player.x + tileSize <= screenWidth) {
-        wallsV.getChildren().forEach(function (sprite) {
-          if (
-            player.x + tileSize / 2 <= sprite.x + sprite.width &&
-            player.x + tileSize / 2 >= sprite.x - sprite.width
-          ) {
-            console.log("TEST");
-            flag = true;
+      if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
+        if (player.y - tileSize >= 0) {
+          wallsH.getChildren().forEach(function (sprite) {
+            if (
+              player.y - tileSize / 2 <= sprite.y + sprite.height &&
+              player.y - tileSize / 2 >= sprite.y - sprite.height
+            ) {
+              console.log("up");
+              flag = true;
+            }
+          });
+          if (flag == false) {
+            move("up");
           }
-        });
-        if (flag == false) {
-          move("right");
         }
-      }
-    }
-    if (this.input.keyboard.checkDown(cursors.up, moveTimer)) {
-      if (player.y - tileSize >= 0) {
-        wallsH.getChildren().forEach(function (sprite) {
-          if (
-            player.y - tileSize / 2 <= sprite.y + sprite.height &&
-            player.y - tileSize / 2 >= sprite.y - sprite.height
-          ) {
-            console.log("up");
-            flag = true;
+      } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
+        if (player.y + tileSize <= screenHeight) {
+          wallsH.getChildren().forEach(function (sprite) {
+            if (
+              player.y + tileSize / 2 <= sprite.y + sprite.height &&
+              player.y + tileSize / 2 >= sprite.y - sprite.height
+            ) {
+              console.log("TEST");
+              flag = true;
+            }
+          });
+          if (flag == false) {
+            move("down");
           }
-        });
-        if (flag == false) {
-          move("up");
-        }
-      }
-    } else if (this.input.keyboard.checkDown(cursors.down, moveTimer)) {
-      if (player.y + tileSize <= screenHeight) {
-        wallsH.getChildren().forEach(function (sprite) {
-          if (
-            player.y + tileSize / 2 <= sprite.y + sprite.height &&
-            player.y + tileSize / 2 >= sprite.y - sprite.height
-          ) {
-            console.log("TEST");
-            flag = true;
-          }
-        });
-        if (flag == false) {
-          move("down");
         }
       }
     }
@@ -451,7 +599,7 @@ function move(dir) {
     player.x += tileSize;
     player.anims.play("right", true);
   } else if (dir == "down") {
-  /*  if (dir == "up") {
+    /*  if (dir == "up") {
     if (player.y - tileSize >= 0){
       lastPosx = player.x;
       lastPosy = player.y;
@@ -498,362 +646,4 @@ function checkNextMove(dir) {
     } else if (dir == "left") {
     }
   });
-}
-
-function create2() {
-  /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
-  let whiteTile = false;
-  // Number of tiles from and including the middle row of tiles
-  const bottom = CENTER_VERTICAL + 8 * TILE_HEIGHT;
-  const tileScale = 0.99;
-  const tileAdjustment = 0 * tileScale;
-
-  // Loop through the columns
-  for (
-    let hl = CENTER_VERTICAL, hu = CENTER_VERTICAL;
-    hl < bottom;
-    hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
-  ) {
-    // Loop through the row
-    for (
-      let w = TILE_WIDTH / 2;
-      w < config.width;
-      w += TILE_WIDTH + tileAdjustment
-    ) {
-      // Is the first row being generated?
-      if (hl === CENTER_VERTICAL) {
-        // White or blue tile?
-        if (whiteTile) {
-          this.add.image(w, hl, "whiteT").setScale(tileScale);
-        } else {
-          this.add.image(w, hl, "blueT").setScale(tileScale);
-        }
-        // Switch colors
-        whiteTile = !whiteTile;
-      } else {
-        // White or blue tile?
-        if (whiteTile) {
-          this.add.image(w, hu, "whiteT").setScale(tileScale);
-          this.add.image(w, hl, "whiteT").setScale(tileScale);
-        } else {
-          this.add.image(w, hu, "blueT").setScale(tileScale);
-          this.add.image(w, hl, "blueT").setScale(tileScale);
-        }
-        // Switch colors
-        whiteTile = !whiteTile;
-      }
-    }
-    // Alternate orders for row
-    whiteTile = !whiteTile;
-  }
-
-  // GENERATE WALLS ---------------------------------------------------------------------
-  // Create the horizontal walls and the vertical walls
-  wallsH = this.physics.add.staticGroup();
-  wallsV = this.physics.add.staticGroup();
-
-  // Generate the vertical maze walls
-  // Jewel walls
-  wallsV.create(CENTER_HORIZONTAL - 140, CENTER_VERTICAL - 20, "wallV");
-  wallsV.create(CENTER_HORIZONTAL - 140, CENTER_VERTICAL + 20, "wallV");
-  // Border walls left
-  wallsV.create(CENTER_HORIZONTAL - 20 - 7 * 40, CENTER_VERTICAL, "wallV");
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL - 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL + 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL - 220,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL + 220,
-    "wallV"
-  );
-  // Border walls right
-  wallsV.create(CENTER_HORIZONTAL + 20 + 7 * 40, CENTER_VERTICAL, "wallV");
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL - 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL + 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL - 220,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL + 220,
-    "wallV"
-  );
-
-  // Generate the horizontal maze walls
-  // Jewel walls
-  wallsH.create(CENTER_HORIZONTAL + 20, CENTER_VERTICAL - 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL + 20, CENTER_VERTICAL + 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL - 100, CENTER_VERTICAL - 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL - 100, CENTER_VERTICAL + 100, "wallH");
-  // Border walls top and bottom
-  for (
-    let i = CENTER_HORIZONTAL - 20 - 6 * 40;
-    i < CENTER_HORIZONTAL + 7 * 40;
-    i += 40
-  ) {
-    wallsH.create(i, CENTER_VERTICAL - 300, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 300, "wallH");
-  }
-
-  // The player and its settings
-  player = this.physics.add
-    .sprite(20 + 4 * 40, CENTER_VERTICAL - 12, "dude")
-    .setScale(0.6);
-
-  //  Player physics properties. Give the little guy a slight bounce.
-  //player.setBounce(0.2);
-  player.setCollideWorldBounds(true);
-  player.body.onWorldBounds = true;
-
-  //  Our player animations, turning, walking left and walking right.
-  this.anims.create({
-    key: "left",
-    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
-    frameRate: 10,
-    repeat: -1,
-  });
-
-  this.anims.create({
-    key: "turn",
-    frames: [{ key: "dude", frame: 4 }],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: "right",
-    frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
-    frameRate: 10,
-    repeat: -1,
-  });
-
-  //  Input Events
-  cursors = this.input.keyboard.createCursorKeys();
-
-  jewel = this.physics.add.sprite(
-    800 - 20 - 7 * 40,
-    CENTER_VERTICAL - 10,
-    "jewel"
-  );
-  jewel.setScale(0.125);
-
-  guards = this.physics.add.group();
-
-  //  stops player from going through platforms
-  this.physics.add.collider(player, wallsH, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
-  this.physics.add.collider(player, wallsV, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
-  this.physics.add.collider(guards, platforms);
-
-  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-  this.physics.add.overlap(player, jewel, collectJewel, null, this);
-
-  //this.physics.add.collider(player, guards, hitGuard, null, this);
-
-  //Collision event
-}
-
-function create2() {
-  /// GENERATE CHECKERBOARD BACKGROUND ---------------------------------------------------
-  let whiteTile = false;
-  // Number of tiles from and including the middle row of tiles
-  const bottom = CENTER_VERTICAL + 8 * TILE_HEIGHT;
-  const tileScale = 0.99;
-  const tileAdjustment = 0 * tileScale;
-
-  // Loop through the columns
-  for (
-    let hl = CENTER_VERTICAL, hu = CENTER_VERTICAL;
-    hl < bottom;
-    hl += TILE_HEIGHT + tileAdjustment, hu -= TILE_HEIGHT + tileAdjustment
-  ) {
-    // Loop through the row
-    for (
-      let w = TILE_WIDTH / 2;
-      w < config.width;
-      w += TILE_WIDTH + tileAdjustment
-    ) {
-      // Is the first row being generated?
-      if (hl === CENTER_VERTICAL) {
-        // White or blue tile?
-        if (whiteTile) {
-          this.add.image(w, hl, "whiteT").setScale(tileScale);
-        } else {
-          this.add.image(w, hl, "blueT").setScale(tileScale);
-        }
-        // Switch colors
-        whiteTile = !whiteTile;
-      } else {
-        // White or blue tile?
-        if (whiteTile) {
-          this.add.image(w, hu, "whiteT").setScale(tileScale);
-          this.add.image(w, hl, "whiteT").setScale(tileScale);
-        } else {
-          this.add.image(w, hu, "blueT").setScale(tileScale);
-          this.add.image(w, hl, "blueT").setScale(tileScale);
-        }
-        // Switch colors
-        whiteTile = !whiteTile;
-      }
-    }
-    // Alternate orders for row
-    whiteTile = !whiteTile;
-  }
-
-  // GENERATE WALLS ---------------------------------------------------------------------
-  // Create the horizontal walls and the vertical walls
-  wallsH = this.physics.add.staticGroup();
-  wallsV = this.physics.add.staticGroup();
-
-  // Generate the vertical maze walls
-  // Jewel walls
-  wallsV.create(CENTER_HORIZONTAL - 140, CENTER_VERTICAL - 20, "wallV");
-  wallsV.create(CENTER_HORIZONTAL - 140, CENTER_VERTICAL + 20, "wallV");
-  // Border walls left
-  wallsV.create(CENTER_HORIZONTAL - 20 - 7 * 40, CENTER_VERTICAL, "wallV");
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL - 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL + 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL - 220,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL - 20 - 7 * 40,
-    CENTER_VERTICAL + 220,
-    "wallV"
-  );
-  // Border walls right
-  wallsV.create(CENTER_HORIZONTAL + 20 + 7 * 40, CENTER_VERTICAL, "wallV");
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL - 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL + 120,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL - 220,
-    "wallV"
-  );
-  wallsV.create(
-    CENTER_HORIZONTAL + 20 + 7 * 40,
-    CENTER_VERTICAL + 220,
-    "wallV"
-  );
-
-  // Generate the horizontal maze walls
-  // Jewel walls
-  wallsH.create(CENTER_HORIZONTAL + 20, CENTER_VERTICAL - 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL + 20, CENTER_VERTICAL + 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL - 100, CENTER_VERTICAL - 100, "wallH");
-  wallsH.create(CENTER_HORIZONTAL - 100, CENTER_VERTICAL + 100, "wallH");
-  // Border walls top and bottom
-  for (
-    let i = CENTER_HORIZONTAL - 20 - 6 * 40;
-    i < CENTER_HORIZONTAL + 7 * 40;
-    i += 40
-  ) {
-    wallsH.create(i, CENTER_VERTICAL - 300, "wallH");
-    wallsH.create(i, CENTER_VERTICAL + 300, "wallH");
-  }
-
-  // The player and its settings
-  player = this.physics.add
-    .sprite(20 + 4 * 40, CENTER_VERTICAL - 12, "dude")
-    .setScale(0.6);
-
-  //  Player physics properties. Give the little guy a slight bounce.
-  //player.setBounce(0.2);
-  player.setCollideWorldBounds(true);
-  player.body.onWorldBounds = true;
-
-  //  Our player animations, turning, walking left and walking right.
-  this.anims.create({
-    key: "left",
-    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
-    frameRate: 10,
-    repeat: -1,
-  });
-
-  this.anims.create({
-    key: "turn",
-    frames: [{ key: "dude", frame: 4 }],
-    frameRate: 20,
-  });
-
-  this.anims.create({
-    key: "right",
-    frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
-    frameRate: 10,
-    repeat: -1,
-  });
-
-  //  Input Events
-  cursors = this.input.keyboard.createCursorKeys();
-
-  jewel = this.physics.add.sprite(
-    800 - 20 - 7 * 40,
-    CENTER_VERTICAL - 10,
-    "jewel"
-  );
-  jewel.setScale(0.125);
-
-  guards = this.physics.add.group();
-
-  //  stops player from going through platforms
-  this.physics.add.collider(player, wallsH, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
-  this.physics.add.collider(player, wallsV, function () {
-    player.y = lastPosy;
-    player.x = lastPosx;
-  });
-  this.physics.add.collider(guards, platforms);
-
-  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-  this.physics.add.overlap(player, jewel, collectJewel, null, this);
-
-  //this.physics.add.collider(player, guards, hitGuard, null, this);
-
-  //Collision event
 }
