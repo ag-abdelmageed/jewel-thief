@@ -425,8 +425,8 @@ function move(dir){
       }
       else if (dir == "right"){
         //player.anims.play("right", true);
-        //player.x += 1
-        player.body.setVelocity(25, 0)
+        player.x += 1
+        //player.body.setVelocity(25, 0)
       }
       else if (dir == "left"){
         //player.anims.play("left", true);
