@@ -46,10 +46,13 @@ function preload() {
   this.load.image("wallV", "assets/wallV.png");
   this.load.image("wallH", "assets/wallH.png");
   this.load.image("jewel", "assets/jewel.png");
-  this.load.image("guard", "assets/bomb.png");
   this.load.spritesheet("dude", "assets/Robber.png", {
     frameWidth: 190, 
     frameHeight: 340, 
+  });
+  this.load.spritesheet("guard", "assets/Guard.png", {
+    frameWidth: 28, 
+    frameHeight: 55, 
   });
 }
 
@@ -192,6 +195,26 @@ function create1() {
   this.anims.create({
     key: "right",
     frames: this.anims.generateFrameNumbers("dude", { start: 6, end: 6 }),
+    frameRate: 15,
+    repeat: 1,
+  });
+
+  // Guard animations
+  this.anims.create({
+    key: "front",
+    frames: [{ key: "guard", frame: 0 }],
+    frameRate: 20,
+  });
+
+  this.anims.create({
+    key: "back",
+    frames: [{ key: "guard", frame: 1 }],
+    frameRate: 20,
+  });
+
+  this.anims.create({
+    key: "walk",
+    frames: this.anims.generateFrameNumbers("guard", { start: 2, end: 5 }),
     frameRate: 15,
     repeat: 1,
   });
