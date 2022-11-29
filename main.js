@@ -492,8 +492,8 @@ function collectJewel(player, jewel) {
   //TODO RUN GAMEOVER CODE
 
   /*spawn guard code*/
-  var guard = guards.create(100, 300, "guard").setScale(3);
-  guard = guards.create(700, 300, "guard").setScale(3);
+  var guard = guards.create(100, 300, "guard").setScale(1.25);
+  guard = guards.create(700, 300, "guard").setScale(1.25);
   guard.setBounce(1);
   guard.setCollideWorldBounds(true);
   // guard.setVelocity(Phaser.Math.Between(-200, 200), 20);
